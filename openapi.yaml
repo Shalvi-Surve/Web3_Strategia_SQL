@@ -1,0 +1,73 @@
+
+## 🎯 Purpose
+
+This repo demonstrates:
+- Fully SQL-driven analytics pipelines  
+- Configurable scoring models  
+- Web3 identity stitching  
+- Region & source optimization  
+- Lifecycle scoring and upsell prediction  
+- Secure API layer using API Keys  
+- OpenAPI documentation for all endpoints  
+
+This repo is designed to run on:
+- PostgreSQL  
+- TimescaleDB (recommended for time-series data)  
+
+---
+
+## 🚀 Quick Start
+
+### 1. Install Database Schema
+Run all SQL files in the `/SQL` folder in order.
+
+### 2. Generate an API Key
+See `API_KEYS.md` (secure generation + DB insert).
+
+### 3. Start Backend
+Any backend (Node.js, Python, PostgREST) can wrap these SQL functions as API endpoints.
+
+### 4. Use the API
+See `docs/endpoints.md` for full endpoint documentation.
+
+---
+
+## 📄 Documentation
+
+| File | Purpose |
+|------|---------|
+| **openapi.yaml** | Full API specification (import into Swagger / Postman) |
+| **API_KEYS.md** | How API keys are generated, stored, validated |
+| **docs/endpoints.md** | Detailed endpoint reference |
+| **docs/architecture.md** | Data architecture + flow diagrams |
+| **docs/examples.md** | cURL / Postman examples + sample JSON responses |
+
+---
+
+## 🔐 Security & Privacy
+
+- All endpoints use API-key authentication  
+- No PII is returned; only `unified_user_id` or aggregated data  
+- Wallet addresses can be hashed or redacted  
+- Configurable rate limits and scopes  
+
+---
+
+## 🛠 Tech Used
+
+- PostgreSQL / TimescaleDB  
+- SQL analytical models  
+- OpenAPI (Swagger) for API documentation  
+
+---
+
+## 👥 Team
+
+**Team CodePhoenix**  
+- Shalvi Atul Surve (Team Lead)  
+- Adithyan S  
+
+---
+
+## 📬 Contact  
+For Clarifications (Competition-related only): Refer to Web3 Strategia platform.
