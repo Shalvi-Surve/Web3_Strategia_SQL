@@ -1,1 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Onchain360 Analytics API
+  description: Read-only APIs for Onchain360 — Web3 Strategia submission (Team CodePhoenix). Aggregated outputs only; no PII.
+  version: "1.0.0"
 
+servers:
+  - url: https://api.yourdomain.com/v1
+    description: Production
+  - url: https://api.staging.yourdomain.com/v1
+    description: Staging
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  schemas:
+
+    ScoreComponent:
+      type: object
+      properties:
+        engagement: { type: number, format: float }
+        trust: { type: number, format: float }
+        value_activity: { type: number, format: float }
+        retention: { type: number, format: float }
+
+    TrendPoint:
+      type: object
+      properties:
+        date: { type: string, format: date }
+        score: { type: number, format: float }
+
+    PositioningResponse:
+      type: object
+      properties:
+        unified_user_id: { type: string }
+        positioning_score: { type: number }
+        components:
+          $ref: '#/components/schemas/ScoreComponent'
+        trend:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendPoint'
+        metadata:
+          type: object
+          properties:
+            calculation_version: { type: string }
+            weights:
+              type: object
+              additionalProperties:
+                type: number
+
+    ICPMatchRequest:
+      type: object
+      properties:
+        wallet_address: { type: string }
+        sample_profile:
+          type: object
+          additionalProperties:
+            type: number
+
+    ICPMatchResponse:
+      type: object
+      properties:
+        wallet: { type: string }
+        icp_score: { type: number }
+        matches:
+          type: array
+          items:
+            type: object
+            properties:
+              attribute: { type: string }
+              value: { type: string }
+              match_score: { type: number }
+
+    RegionPerformanceItem:
+      type: object
+      properties:
+        country: { type: string }
+        performance: { type: number }
+        avg_value: { type: number }
+        sessions: { type: integer }
+
+    UpsellItem:
+      type: object
+      properties:
+        unified_user_id: { type: string }
+        upsell_score: { type: number }
+        suggested_action: { type: string }
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /score/positioning:
+    get:
+      summary: Get positioning score for a unified user
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: since
+          in: query
+          schema: { type: string, format: date }
+        - name: until
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Positioning score and components
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PositioningResponse'
+
+  /icp/match:
+    post:
+      summary: Match a wallet/profile to discovered ICP attributes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ICPMatchRequest'
+      responses:
+        '200':
+          description: ICP match response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ICPMatchResponse'
+
+  /region/performance:
+    get:
+      summary: Compute and return region performance analytics
+      parameters:
+        - name: top
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        '200':
+          description: Region ranking output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  regions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RegionPerformanceItem'
+
+  /upsell/readiness:
+    get:
+      summary: Retrieve top users sorted by upsell readiness
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        '200':
+          description: Upsell list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UpsellItem'
